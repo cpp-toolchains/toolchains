@@ -86,7 +86,6 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         path: artifacts
-        merge-multiple: true
     - name: Update configs
       run: python3 scripts/scripts/update_llvm_configs.py --tag=${{ inputs.llvm_tag }}
     - name: Upload config

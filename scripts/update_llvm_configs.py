@@ -21,7 +21,8 @@ for os_ in all_os:
   for cpu in all_cpu:
     for art in all_artifacts:
       try:
-        path = f"artifacts/{args.tag}-{os_}-{cpu}-{art}.tar.zst"
+        print(f"Testing {args.tag}-{os_}-{cpu}-{art}.tar.zst")
+        path = f"artifacts/{os_}-{cpu}-toolchain/{args.tag}-{os_}-{cpu}-{art}.tar.zst"
         f = open(path, 'rb')
         hash = hashlib.file_digest(f, 'sha256').hexdigest()
         f.close()
@@ -37,9 +38,11 @@ for os_ in all_os:
         config_file.write(json.dumps(data, indent=4))
         config_file.close()
 
+        print("Ok")
+
         readme += f"{hash} {args.tag}-{os_}-{cpu}-{art}.tar.zst\n"
-      except:
-        pass
+      except Exception as e:
+        print(f"Failed - {e}")
 
 f = open("RELEASE_NOTES.txt", 'w')
 f.write(readme)
