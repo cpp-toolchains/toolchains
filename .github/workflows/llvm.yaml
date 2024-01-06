@@ -87,7 +87,7 @@ jobs:
       with:
         path: artifacts
     - name: Update configs
-      run: python3 scripts/scripts/update_llvm_configs.py --tag=${{ inputs.llvm_tag }}
+      run: python3.11 scripts/scripts/update_llvm_configs.py --tag=${{ inputs.llvm_tag }}
     - name: Upload config
       uses: GuillaumeFalourd/git-commit-push@v1.3
       with:
