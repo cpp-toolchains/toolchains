@@ -86,8 +86,11 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         path: artifacts
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' 
     - name: Update configs
-      run: python3.11 scripts/scripts/update_llvm_configs.py --tag=${{ inputs.llvm_tag }}
+      run: python scripts/scripts/update_llvm_configs.py --tag=${{ inputs.llvm_tag }}
     - name: Upload config
       uses: GuillaumeFalourd/git-commit-push@v1.3
       with:
