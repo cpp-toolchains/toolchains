@@ -27,11 +27,16 @@ for os_ in all_os:
         hash = hashlib.file_digest(f, 'sha256').hexdigest()
         f.close()
 
+        print(f"Hash is {hash}")
+
         config_path = f"llvm/{os_}/{cpu}/{art}.json"
         config_file = open(config_path, 'r')
         data = json.load(config_file)
         config_file.close()
+        print("Loaded config")
         url = f"https://github.com/cpp-toolchains/toolchains/releases/download/{args.tag}-{today}/{args.tag}-{os_}-{cpu}-{art}.tar.zst"
+        if args.tag not in data:
+          data[args.tag] = {}
         data[args.tag]["url"] = url
         data[args.tag]["sha256"] = hash
         config_file = open(config_file, 'w')
