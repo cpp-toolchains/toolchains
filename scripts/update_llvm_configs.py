@@ -39,7 +39,7 @@ for os_ in all_os:
           data[args.tag] = {}
         data[args.tag]["url"] = url
         data[args.tag]["sha256"] = hash
-        config_file = open(config_file, 'w')
+        config_file = open(config_path, 'w')
         config_file.write(json.dumps(data, indent=4))
         config_file.close()
 
