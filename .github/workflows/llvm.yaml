@@ -92,6 +92,7 @@ jobs:
       with:
         python-version: '3.11' 
     - name: Update configs
+      id: update
       run: python scripts/scripts/update_llvm_configs.py --tag=${{ inputs.llvm_tag }}
     - name: Upload config
       uses: stefanzweifel/git-auto-commit-action@v5

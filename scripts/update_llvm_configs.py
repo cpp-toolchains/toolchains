@@ -35,10 +35,11 @@ for os_ in all_os:
         config_file.close()
         print("Loaded config")
         url = f"https://github.com/cpp-toolchains/toolchains/releases/download/{args.tag}-{today}/{args.tag}-{os_}-{cpu}-{art}.tar.zst"
-        if args.tag not in data:
-          data[args.tag] = {}
-        data[args.tag]["url"] = url
-        data[args.tag]["sha256"] = hash
+        version = args.tag.replace("llvmorg-", "")
+        if version not in data:
+          data[version] = {}
+        data[version]["url"] = url
+        data[version]["sha256"] = hash
         config_file = open(config_path, 'w')
         config_file.write(json.dumps(data, indent=4))
         config_file.close()
@@ -52,3 +53,7 @@ for os_ in all_os:
 f = open("RELEASE_NOTES.txt", 'w')
 f.write(readme)
 f.close()
+
+if "GITHUB_OUTPUT" in os.environ:
+  with open(os.environ["GITHUB_OUTPUT"], 'w') as f:
+    f.write(f"tag_name={args.tag}-today")

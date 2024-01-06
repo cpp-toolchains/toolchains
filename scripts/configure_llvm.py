@@ -75,15 +75,12 @@ cmake_args = [
     "-DLLVM_STATIC_LINK_CXX_STDLIB=ON",
     "-DLLVM_INSTALL_TOOLCHAIN_ONLY=ON",
     "-DLLVM_TOOLCHAIN_TOOLS={}".format(';'.join(llvm_tools)),
-    "-DLLVM_DISTRIBUTIONS=ClangTidy;ClangDoc;ClangFormat;ClangdTool;BoltTool;LldTool;StdLib;Toolchain",
-    "-DLLVM_ClangTidy_DISTRIBUTION_COMPONENTS=clang-tidy",
-    "-DLLVM_ClangDoc_DISTRIBUTION_COMPONENTS=clang-doc",
-    "-DLLVM_ClangFormat_DISTRIBUTION_COMPONENTS=clang-format",
-    "-DLLVM_ClangdTool_DISTRIBUTION_COMPONENTS=clangd",
+    "-DLLVM_DISTRIBUTIONS=ClangTools;BoltTool;LldTool;StdLib;Toolchain",
+    "-DLLVM_ClangTools_DISTRIBUTION_COMPONENTS=clang-tidy;clang-doc;clang-format;clangd",
     "-DLLVM_BoltTool_DISTRIBUTION_COMPONENTS=bolt",
     "-DLLVM_LldTool_DISTRIBUTION_COMPONENTS=lld",
     "-DLLVM_StdLib_DISTRIBUTION_COMPONENTS=runtimes",
-    "-DLLVM_Toolchain_DISTRIBUTION_COMPONENTS=clang;clang-format;clang-tidy;clang-resource-headers;bolt;runtimes;lld;{}".format(';'.join(llvm_tools)),
+    "-DLLVM_Toolchain_DISTRIBUTION_COMPONENTS=clang;clang-format;clang-tidy;clang-doc;clangd;clang-resource-headers;bolt;runtimes;lld;{}".format(';'.join(llvm_tools)),
 ]
 
 if platform.system() == "Darwin":
