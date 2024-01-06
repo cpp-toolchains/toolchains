@@ -13,6 +13,12 @@ jobs:
           - os: linux
             runner: ubuntu-latest
             cpu: x86_64
+          - os: macos
+            runner: macos-13
+            cpu: x86_64
+          - os: macos
+            runner: flyci-macos-large-latest-m1
+            cpu: aarch64
     runs-on: ${{ matrix.runner }}
     steps:
     - name: Install Linux dependencies
@@ -56,14 +62,33 @@ jobs:
       run: |
         mkdir build && mkdir install
 
-        cd install
+        python3 ./toolchain/scripts/configure_llvm.py --build_dir=$PWD/build
 
-        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clang.tar.zst
-        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clang-tools.tar.zst
-        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clangd.tar.zst
-        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-bolt.tar.zst
-        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-libcxx.tar.zst
-        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-lld.tar.zst
+        cd build
+
+        DESTDIR=$PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-clang-tools ninja install-clangtools-distribution-stripped
+        DESTDIR=$PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-bolt ninja install-bolttool-distribution-stripped
+        DESTDIR=$PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-lld ninja install-lldtool-distribution-stripped
+        DESTDIR=$PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-libcxx ninja install-stdlib-distribution-stripped
+        DESTDIR=$PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-clang ninja install-toolchain-distribution-stripped
+
+        ../toolchain/scripts/flatten_usr_dirs.sh $PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-clang-tools
+        ../toolchain/scripts/flatten_usr_dirs.sh $PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-bolt
+        ../toolchain/scripts/flatten_usr_dirs.sh $PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-lld
+        ../toolchain/scripts/flatten_usr_dirs.sh $PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-libcxx
+        ../toolchain/scripts/flatten_usr_dirs.sh $PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-clang
+
+        ninja llvm-dwp
+        DESTDIR=$PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}} ninja install-pstl
+        cp ./bin/llvm-dwp ../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}/bin/
+
+        cd ../install
+
+        tar --zstd -cf ${{ inputs.llvm_tag }}-${{matrix.os}}-${{matrix.cpu}}-clang.tar.zst ${{ inputs.llvm_tag }}-${{matrix.os}}-${{matrix.cpu}}
+        tar --zstd -cf ${{ inputs.llvm_tag }}-${{matrix.os}}-${{matrix.cpu}}-clang-tools.tar.zst ${{ inputs.llvm_tag }}-${{matrix.os}}-${{matrix.cpu}}-clang-tools
+        tar --zstd -cf ${{ inputs.llvm_tag }}-${{matrix.os}}-${{matrix.cpu}}-bolt.tar.zst ${{ inputs.llvm_tag }}-${{matrix.os}}-${{matrix.cpu}}-bolt
+        tar --zstd -cf ${{ inputs.llvm_tag }}-${{matrix.os}}-${{matrix.cpu}}-lld.tar.zst ${{ inputs.llvm_tag }}-${{matrix.os}}-${{matrix.cpu}}-lld
+        tar --zstd -cf ${{ inputs.llvm_tag }}-${{matrix.os}}-${{matrix.cpu}}-libcxx.tar.zst ${{ inputs.llvm_tag }}-${{matrix.os}}-${{matrix.cpu}}-libcxx
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
@@ -99,5 +124,13 @@ jobs:
       with:
         file_pattern: llvm
         commit_message: Update LLVM for ${{inputs.llvm_tag}}
-        branch: releases_test
+        branch: releases
         create_branch: false
+    - name: Create release
+      uses: softprops/action-gh-release@v1
+      with:
+        token: ${{ secrets.RELEASE_TOKEN }}
+        body_path: RELEASE_NOTES.txt
+        tag_name: ${{ steps.update.outputs.tag_name }}
+        name: LLVM Toolchain ${{ inputs.llvm_tag }}
+        target_commitish: releases
