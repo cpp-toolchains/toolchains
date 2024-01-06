@@ -1,0 +1,97 @@
+name: Build LLVM toolchain
+on:
+    workflow_dispatch:
+        inputs:
+            llvm_tag:
+                required: true
+  
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: linux
+            runner: ubuntu-latest
+            cpu: x86_64
+    runs-on: ${{ matrix.runner }}
+    steps:
+    - name: Install Linux dependencies
+      if: matrix.os == 'linux'
+      run: sudo apt update && sudo apt install -yqq python3 git ninja-build cmake zstd
+    - name: Install ARM toolchain
+      if: matrix.os == 'linux'
+      run: sudo apt install -yqq gcc-arm-linux-gnueabi g++-arm-linux-gnueabi binutils-arm-linux-gnueabi
+    - name: Install AArch64 toolchain
+      if: matrix.os == 'linux'
+      run: sudo apt install -yqq gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu
+    - name: Install RISC-V toolchain
+      if: matrix.os == 'linux'
+      run: sudo apt install -yqq gcc-riscv64-linux-gnu g++-riscv64-linux-gnu binutils-riscv64-linux-gnu
+    - name: Setup mold
+      if: matrix.os == 'linux'
+      uses: rui314/setup-mold@v1
+      with:
+        mold-version: 2.4.0
+        make-default: false
+    - name: Install macOS dependencies
+      if: matrix.os == 'macos'
+      run: brew install ninja zstd gnu-tar
+    - name: Checkout LLVM 
+      uses: actions/checkout@v4
+      with:
+        repository: "llvm/llvm-project"
+        ref: ${{ inputs.llvm_tag }}
+        path: llvm
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        path: toolchain
+    - name: Setup Xcode
+      if: matrix.os == 'macos'
+      run: sudo xcode-select -s /Applications/Xcode_15.1.app
+    - name: Build and install
+      env:
+        CXXFLAGS: -w
+        CFLAGS: -w
+      run: |
+        mkdir build && mkdir install
+
+        cd install
+
+        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clang.tar.zst
+        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clang-tools.tar.zst
+        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clangd.tar.zst
+        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-bolt.tar.zst
+        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-libcxx.tar.zst
+        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-lld.tar.zst
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        path: install/${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}*.tar.zst
+        name: ${{matrix.os}}-${{matrix.cpu}}-toolchain
+
+  release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: releases_test
+    - name: Checkout scripts
+      uses: actions/checkout@v4
+      with:
+        path: scripts
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+        merge-multiple: true
+    - name: Update configs
+      run: python3 scripts/scripts/update_llvm_configs.py --tag=${{ inputs.llvm_tag }}
+    - name: Upload config
+      uses: GuillaumeFalourd/git-commit-push@v1.3
+      with:
+        files: llvm
+        commit_message: Update LLVM for ${{inputs.llvm_tag}}
+        target_branch: releases_test
