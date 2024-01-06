@@ -58,12 +58,12 @@ jobs:
 
         cd install
 
-        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clang.tar.zst
-        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clang-tools.tar.zst
-        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clangd.tar.zst
-        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-bolt.tar.zst
-        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-libcxx.tar.zst
-        ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-lld.tar.zst
+        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clang.tar.zst
+        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clang-tools.tar.zst
+        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-clangd.tar.zst
+        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-bolt.tar.zst
+        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-libcxx.tar.zst
+        touch ${{ inputs.llvm_tag }}-${{ matrix.os }}-${{matrix.cpu}}-lld.tar.zst
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
