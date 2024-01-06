@@ -72,6 +72,8 @@ jobs:
 
   release:
     needs: [build]
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -92,8 +94,9 @@ jobs:
     - name: Update configs
       run: python scripts/scripts/update_llvm_configs.py --tag=${{ inputs.llvm_tag }}
     - name: Upload config
-      uses: GuillaumeFalourd/git-commit-push@v1.3
+      uses: stefanzweifel/git-auto-commit-action@v5
       with:
-        files: llvm
+        file_pattern: llvm
         commit_message: Update LLVM for ${{inputs.llvm_tag}}
-        target_branch: releases_test
+        branch: releases_test
+        create_branch: false
