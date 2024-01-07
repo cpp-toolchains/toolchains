@@ -16,9 +16,9 @@ jobs:
           - os: macos
             runner: macos-13
             cpu: x86_64
-          - os: macos
-            runner: flyci-macos-large-latest-m1
-            cpu: aarch64
+          # - os: macos
+          #   runner: flyci-macos-large-latest-m1
+          #   cpu: aarch64
     runs-on: ${{ matrix.runner }}
     steps:
     - name: Install Linux dependencies
