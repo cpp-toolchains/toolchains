@@ -4,6 +4,7 @@ import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--build_dir", type=str, required=True)
+parser.add_argument("--llvm_dir", type=str, default="llvm/llvm")
 
 args = parser.parse_args()
 
@@ -57,7 +58,7 @@ cmake_args = [
     "-B",
     args.build_dir,
     "-S",
-    "llvm/llvm",
+    args.llvm_dir,
     "-DCMAKE_BUILD_TYPE=Release",
     "-DCMAKE_INSTALL_PREFIX=/usr/local",
     "-DLLVM_TARGETS_TO_BUILD={}".format(';'.join(targets_to_build)),
@@ -84,7 +85,15 @@ cmake_args = [
 ]
 
 if platform.system() == "Darwin":
-    cmake_args.append("-DRUNTIMES_BUILD_ALLOW_DARWIN=ON")
+    cmake_args.extend([
+        "-DRUNTIMES_BUILD_ALLOW_DARWIN=ON",
+        "-DCOMPILER_RT_SUPPORTED_ARCH=arm64e;x86_64",
+        "-DCOMPILER_RT_ENABLE_IOS=ON",
+        "-DCOMPILER_RT_ENABLE_WATCHOS=ON",
+        "-DCOMPILER_RT_ENABLE_TVOS=ON",
+        "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON",
+        "-DCMAKE_OSX_DEPLOYMENT_TARGET=13"
+    ])
 
 for rt in runtime_targets:
     cmake_args.extend([
@@ -95,6 +104,7 @@ for rt in runtime_targets:
         f"-DRUNTIMES_{rt}_LIBCXXABI_USE_LLVM_UNWINDER=ON",
         f"-DRUNTIMES_{rt}_LIBCXX_STATICALLY_LINK_ABI_IN_STATIC_LIBRARY=ON",
         f"-DRUNTIMES_{rt}_LIBCXXABI_STATICALLY_LINK_UNWINDER_IN_STATIC_LIBRARY=ON",
+        f"-DRUNTIMES_{rt}_LIBCXX_USE_COMPILER_RT=ON",
     ])
 
     if rt != "x86_64-unknown-linux-gnu":
@@ -111,4 +121,4 @@ if platform.system() == "Linux":
     ])
 
 print(' '.join(cmake_args))
-subprocess.run(cmake_args, check=True, stdout=subprocess.PIPE)
+subprocess.run(cmake_args, check=True)

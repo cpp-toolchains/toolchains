@@ -66,6 +66,7 @@ jobs:
 
         cd build
 
+        ninja
         DESTDIR=$PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-clang-tools ninja install-clangtools-distribution-stripped
         DESTDIR=$PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-bolt ninja install-bolttool-distribution-stripped
         DESTDIR=$PWD/../install/${{inputs.llvm_tag}}-${{matrix.os}}-${{matrix.cpu}}-lld ninja install-lldtool-distribution-stripped
