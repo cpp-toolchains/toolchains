@@ -116,6 +116,7 @@ for rt in runtime_targets:
         cmake_args.extend([
             f"-DRUNTIMES_{rt}_OPENMP_ENABLE_LIBOMPTARGET=OFF",
             f"-DRUNTIMES_{rt}_LIBOMP_OMPD_GDB_SUPPORT=OFF",
+            f"-DRUNTIMES_{rt}_COMPILER_RT_SUPPORTED_ARCH=arm64e;x86_64",
         ])
 
 if platform.system() == "Linux":
