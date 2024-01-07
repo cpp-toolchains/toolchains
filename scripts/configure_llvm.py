@@ -88,7 +88,9 @@ if platform.system() == "Darwin":
     cmake_args.extend([
         "-DRUNTIMES_BUILD_ALLOW_DARWIN=ON",
         "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON",
-        "-DCMAKE_OSX_DEPLOYMENT_TARGET=13"
+        "-DCMAKE_OSX_DEPLOYMENT_TARGET=13",
+        "-DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang",
+        "-DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang++",
     ])
 
 for rt in runtime_targets:
@@ -120,7 +122,7 @@ if platform.system() == "Linux":
     cmake_args.extend([
         "-DCMAKE_C_COMPILER=clang",
         "-DCMAKE_CXX_COMPILER=clang++",
-        "-DLLVM_USE_LINKER=mold"
+        "-DLLVM_USE_LINKER=mold",
     ])
 
 print(' '.join(cmake_args))
