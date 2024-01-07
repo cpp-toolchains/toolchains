@@ -88,9 +88,12 @@ if platform.system() == "Darwin":
     cmake_args.extend([
         "-DRUNTIMES_BUILD_ALLOW_DARWIN=ON",
         "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON",
-        "-DCMAKE_OSX_DEPLOYMENT_TARGET=13",
         # "-DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang",
         # "-DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang++",
+        "-DCOMPILER_RT_SUPPORTED_ARCH=arm64e;x86_64h",
+        "-DDARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64h",
+        "-DDARWIN_osx_BUILTIN_ALL_POSSIBLE_ARCHS=arm64e;x86_64h",
+        "-DALL_BUILTIN_SUPPORTED_ARCH=arm64e;x86_64h",
     ])
 
 for rt in runtime_targets:
@@ -103,20 +106,21 @@ for rt in runtime_targets:
         f"-DRUNTIMES_{rt}_LIBCXX_STATICALLY_LINK_ABI_IN_STATIC_LIBRARY=ON",
         f"-DRUNTIMES_{rt}_LIBCXXABI_STATICALLY_LINK_UNWINDER_IN_STATIC_LIBRARY=ON",
         f"-DRUNTIMES_{rt}_LIBCXX_USE_COMPILER_RT=ON",
+        f"-DRUNTIMES_{rt}_CMAKE_OSX_DEPLOYMENT_TARGET=12.1",
+        f"-DRUNTIMES_{rt}_DARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64h",
     ])
     if platform.system() == "Darwin":
       cmake_args.extend([
-        "-DCOMPILER_RT_SUPPORTED_ARCH=arm64e;x86_64",
         "-DCOMPILER_RT_ENABLE_IOS=ON",
         "-DCOMPILER_RT_ENABLE_WATCHOS=ON",
         "-DCOMPILER_RT_ENABLE_TVOS=ON",
+        f"-DRUNTIMES_{rt}_COMPILER_RT_SUPPORTED_ARCH=arm64e;x86_64h",
       ])
 
     if rt != "x86_64-unknown-linux-gnu":
         cmake_args.extend([
             f"-DRUNTIMES_{rt}_OPENMP_ENABLE_LIBOMPTARGET=OFF",
             f"-DRUNTIMES_{rt}_LIBOMP_OMPD_GDB_SUPPORT=OFF",
-            f"-DRUNTIMES_{rt}_COMPILER_RT_SUPPORTED_ARCH=arm64e;x86_64",
         ])
 
 if platform.system() == "Linux":
