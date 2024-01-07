@@ -89,8 +89,8 @@ if platform.system() == "Darwin":
         "-DRUNTIMES_BUILD_ALLOW_DARWIN=ON",
         "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON",
         "-DCMAKE_OSX_DEPLOYMENT_TARGET=13",
-        "-DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang",
-        "-DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang++",
+        # "-DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang",
+        # "-DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang++",
     ])
 
 for rt in runtime_targets:
