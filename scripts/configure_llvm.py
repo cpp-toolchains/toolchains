@@ -87,10 +87,6 @@ cmake_args = [
 if platform.system() == "Darwin":
     cmake_args.extend([
         "-DRUNTIMES_BUILD_ALLOW_DARWIN=ON",
-        "-DCOMPILER_RT_SUPPORTED_ARCH=arm64e;x86_64",
-        "-DCOMPILER_RT_ENABLE_IOS=ON",
-        "-DCOMPILER_RT_ENABLE_WATCHOS=ON",
-        "-DCOMPILER_RT_ENABLE_TVOS=ON",
         "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON",
         "-DCMAKE_OSX_DEPLOYMENT_TARGET=13"
     ])
@@ -106,6 +102,13 @@ for rt in runtime_targets:
         f"-DRUNTIMES_{rt}_LIBCXXABI_STATICALLY_LINK_UNWINDER_IN_STATIC_LIBRARY=ON",
         f"-DRUNTIMES_{rt}_LIBCXX_USE_COMPILER_RT=ON",
     ])
+    if platform.system() == "Darwin":
+      cmake_args.extend([
+        "-DCOMPILER_RT_SUPPORTED_ARCH=arm64e;x86_64",
+        "-DCOMPILER_RT_ENABLE_IOS=ON",
+        "-DCOMPILER_RT_ENABLE_WATCHOS=ON",
+        "-DCOMPILER_RT_ENABLE_TVOS=ON",
+      ])
 
     if rt != "x86_64-unknown-linux-gnu":
         cmake_args.extend([
