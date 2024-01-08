@@ -94,6 +94,7 @@ if platform.system() == "Darwin":
         "-DDARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64h",
         "-DDARWIN_osx_BUILTIN_ALL_POSSIBLE_ARCHS=arm64e;x86_64h",
         "-DALL_BUILTIN_SUPPORTED_ARCH=arm64e;x86_64h",
+        "-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON",
     ])
 
 for rt in runtime_targets:
@@ -108,6 +109,7 @@ for rt in runtime_targets:
         f"-DRUNTIMES_{rt}_LIBCXX_USE_COMPILER_RT=ON",
         f"-DRUNTIMES_{rt}_CMAKE_OSX_DEPLOYMENT_TARGET=12.1",
         f"-DRUNTIMES_{rt}_DARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64h",
+        f"-DRUNTIMES_{rt}_COMPILER_RT_DEFAULT_TARGET_ONLY=ON",
     ])
     if platform.system() == "Darwin":
       cmake_args.extend([
