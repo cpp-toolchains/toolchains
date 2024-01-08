@@ -91,6 +91,7 @@ cmake_args = [
 if platform.system() == "Darwin":
     cmake_args.extend([
         "-DRUNTIMES_BUILD_ALLOW_DARWIN=ON",
+        "-DLLVM_ENABLE_LIBCXX=ON",
         "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON",
         "-DCMAKE_C_COMPILER=/usr/local/opt/llvm@15/bin/clang",
         "-DCMAKE_CXX_COMPILER=/usr/local/opt/llvm@15/bin/clang++",
