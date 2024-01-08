@@ -100,11 +100,11 @@ if platform.system() == "Darwin":
         "-DALL_BUILTIN_SUPPORTED_ARCH=arm64e;x86_64h",
         "-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON",
         "-DCOMPILER_RT_EXTERNALIZE_DEBUGINFO=ON",
-        "-DLLVM_CREATE_XCODE_TOOLCHAIN=ON",
-        "-DCLANG_SPAWN_CC1=ON",
+        # "-DLLVM_CREATE_XCODE_TOOLCHAIN=ON",
+        # "-DCLANG_SPAWN_CC1=ON",
         "-DCMAKE_MACOSX_RPATH=ON",
-        "-DLLVM_ENABLE_MODULES=ON",
-        "-DCOMPILER_RT_BUILD_SANITIZERS=ON",
+        # "-DLLVM_ENABLE_MODULES=ON",
+        # "-DCOMPILER_RT_BUILD_SANITIZERS=ON",
     ])
 
 for rt in runtime_targets:
