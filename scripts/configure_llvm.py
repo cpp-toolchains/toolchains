@@ -95,9 +95,9 @@ if platform.system() == "Darwin":
         "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON",
         # "-DCMAKE_C_COMPILER=/usr/local/opt/llvm@15/bin/clang",
         # "-DCMAKE_CXX_COMPILER=/usr/local/opt/llvm@15/bin/clang++",
-        "-DDARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64h",
-        "-DDARWIN_osx_ARCHS=arm64e;x86_64h",
-        "-DALL_BUILTIN_SUPPORTED_ARCH=arm64e;x86_64h",
+        "-DDARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64",
+        "-DDARWIN_osx_ARCHS=arm64e;x86_64",
+        "-DALL_BUILTIN_SUPPORTED_ARCH=arm64e;x86_64",
         "-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON",
         "-DCOMPILER_RT_EXTERNALIZE_DEBUGINFO=ON",
         # "-DLLVM_CREATE_XCODE_TOOLCHAIN=ON",
@@ -124,8 +124,8 @@ for rt in runtime_targets:
         "-DCOMPILER_RT_ENABLE_WATCHOS=ON",
         "-DCOMPILER_RT_ENABLE_TVOS=ON",
         f"-DRUNTIMES_{rt}_CMAKE_OSX_DEPLOYMENT_TARGET=12.1",
-        f"-DRUNTIMES_{rt}_DARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64h",
-        f"-DRUNTIMES_{rt}_DARWIN_osx_ARCHS=arm64e;x86_64h",
+        f"-DRUNTIMES_{rt}_DARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64",
+        f"-DRUNTIMES_{rt}_DARWIN_osx_ARCHS=arm64e;x86_64",
         f"-DRUNTIMES_{rt}_COMPILER_RT_DEFAULT_TARGET_ONLY=ON",
       ])
 
