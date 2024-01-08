@@ -10,9 +10,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: linux
-            runner: ubuntu-latest
-            cpu: x86_64
+          # - os: linux
+          #   runner: ubuntu-latest
+          #   cpu: x86_64
           - os: macos
             runner: macos-13
             cpu: x86_64
