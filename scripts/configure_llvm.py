@@ -22,7 +22,8 @@ llvm_tools = [
     "llvm-readobj",
     "llvm-strip",
     "llvm-size",
-    "llvm-symbolizer"
+    "llvm-symbolizer",
+    "llvm-lipo",
 ]
 
 runtime_targets = []
@@ -59,7 +60,9 @@ cmake_args = [
     args.build_dir,
     "-S",
     args.llvm_dir,
-    "-DCMAKE_BUILD_TYPE=Release",
+    "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+    "-DCMAKE_C_FLAGS_RELWITHDEBINFO=\"-O3 -gline-tables-only -DNDEBUG\"",
+    "-DCMAKE_CXX_FLAGS_RELWITHDEBINFO=\"-O3 -gline-tables-only -DNDEBUG\"",
     "-DCMAKE_INSTALL_PREFIX=/usr/local",
     "-DLLVM_TARGETS_TO_BUILD={}".format(';'.join(targets_to_build)),
     "-DLLVM_RUNTIME_TARGETS={}".format(';'.join(runtime_targets)),
@@ -67,6 +70,7 @@ cmake_args = [
     "-DLLVM_ENABLE_TERMINFO=OFF",
     "-DLLVM_ENABLE_ZLIB=OFF",
     "-DLLVM_ENABLE_ZSTD=OFF",
+    "-DLLVM_INCLUDE_TESTS=OFF",
     "-DCLANG_DEFAULT_CXX_STDLIB=libc++",
     "-DCLANG_DEFAULT_RTLIB=compiler-rt",
     "-DCLANG_DEFAULT_UNWINDLIB=libunwind",
@@ -81,20 +85,25 @@ cmake_args = [
     "-DLLVM_BoltTool_DISTRIBUTION_COMPONENTS=bolt",
     "-DLLVM_LldTool_DISTRIBUTION_COMPONENTS=lld",
     "-DLLVM_StdLib_DISTRIBUTION_COMPONENTS=runtimes",
-    "-DLLVM_Toolchain_DISTRIBUTION_COMPONENTS=clang;clang-format;clang-tidy;clang-doc;clangd;clang-resource-headers;bolt;runtimes;lld;{}".format(';'.join(llvm_tools)),
+    "-DLLVM_Toolchain_DISTRIBUTION_COMPONENTS=clang;clang-format;clang-tidy;clang-doc;clangd;clang-resource-headers;bolt;runtimes;lld;LTO;{}".format(';'.join(llvm_tools)),
 ]
 
 if platform.system() == "Darwin":
     cmake_args.extend([
         "-DRUNTIMES_BUILD_ALLOW_DARWIN=ON",
-        "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON",
+        "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=OFF",
         "-DCMAKE_C_COMPILER=/usr/local/opt/llvm@15/bin/clang",
         "-DCMAKE_CXX_COMPILER=/usr/local/opt/llvm@15/bin/clang++",
-        "-DCOMPILER_RT_SUPPORTED_ARCH=arm64e;x86_64h",
         "-DDARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64h",
-        "-DDARWIN_osx_BUILTIN_ALL_POSSIBLE_ARCHS=arm64e;x86_64h",
+        "-DDARWIN_osx_ARCHS=arm64e;x86_64h",
         "-DALL_BUILTIN_SUPPORTED_ARCH=arm64e;x86_64h",
         "-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON",
+        "-DCOMPILER_RT_EXTERNALIZE_DEBUGINFO=ON",
+        "-DLLVM_CREATE_XCODE_TOOLCHAIN=ON",
+        "-DCLANG_SPAWN_CC1=ON",
+        "-DCMAKE_MACOSX_RPATH=ON",
+        "-DLLVM_ENABLE_MODULES=ON",
+        "-DCOMPILER_RT_BUILD_SANITIZERS=ON",
     ])
 
 for rt in runtime_targets:
@@ -107,16 +116,16 @@ for rt in runtime_targets:
         f"-DRUNTIMES_{rt}_LIBCXX_STATICALLY_LINK_ABI_IN_STATIC_LIBRARY=ON",
         f"-DRUNTIMES_{rt}_LIBCXXABI_STATICALLY_LINK_UNWINDER_IN_STATIC_LIBRARY=ON",
         f"-DRUNTIMES_{rt}_LIBCXX_USE_COMPILER_RT=ON",
-        f"-DRUNTIMES_{rt}_CMAKE_OSX_DEPLOYMENT_TARGET=12.1",
-        f"-DRUNTIMES_{rt}_DARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64h",
-        f"-DRUNTIMES_{rt}_COMPILER_RT_DEFAULT_TARGET_ONLY=ON",
     ])
     if platform.system() == "Darwin":
       cmake_args.extend([
         "-DCOMPILER_RT_ENABLE_IOS=ON",
         "-DCOMPILER_RT_ENABLE_WATCHOS=ON",
         "-DCOMPILER_RT_ENABLE_TVOS=ON",
-        f"-DRUNTIMES_{rt}_COMPILER_RT_SUPPORTED_ARCH=arm64e;x86_64h",
+        f"-DRUNTIMES_{rt}_CMAKE_OSX_DEPLOYMENT_TARGET=12.1",
+        f"-DRUNTIMES_{rt}_DARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64h",
+        f"-DRUNTIMES_{rt}_DARWIN_osx_ARCHS=arm64e;x86_64h",
+        f"-DRUNTIMES_{rt}_COMPILER_RT_DEFAULT_TARGET_ONLY=ON",
       ])
 
     if rt != "x86_64-unknown-linux-gnu":
