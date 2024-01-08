@@ -64,6 +64,10 @@ jobs:
 
         python3 ./toolchain/scripts/configure_llvm.py --build_dir=$PWD/build
 
+        brew --prefix llvm@15
+
+        exit
+
         cd build
 
         ninja
