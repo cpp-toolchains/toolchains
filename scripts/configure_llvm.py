@@ -89,7 +89,7 @@ if platform.system() == "Darwin":
         "-DRUNTIMES_BUILD_ALLOW_DARWIN=ON",
         "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON",
         "-DCMAKE_C_COMPILER=/usr/local/opt/llvm@15/bin/clang",
-        "-DCMAKE_C_COMPILER=/usr/local/opt/llvm@15/bin/clang++",
+        "-DCMAKE_CXX_COMPILER=/usr/local/opt/llvm@15/bin/clang++",
         "-DCOMPILER_RT_SUPPORTED_ARCH=arm64e;x86_64h",
         "-DDARWIN_osx_BUILTIN_ARCHS=arm64e;x86_64h",
         "-DDARWIN_osx_BUILTIN_ALL_POSSIBLE_ARCHS=arm64e;x86_64h",
