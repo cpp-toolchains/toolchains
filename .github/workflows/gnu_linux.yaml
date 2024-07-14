@@ -1,0 +1,39 @@
+name: GNU Linux Toolchain
+
+on:
+  push:
+    branches:
+      - gnu_toolchain
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        host:
+          - x86_64-linux-gnu
+        target:
+          - aarch64-linux-gnu
+    steps:
+      - name: Install dependencies
+        run: sudo apt update && sudo apt install -yqq libzstd-dev libisl-dev bisonc++ libisl-dev bison byacc libgmp-dev libmpfr-dev libmpc-dev flex m4
+      - run: git clone --depth=1 git://sourceware.org/git/binutils-gdb.git
+      - run: wget https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-6.9.tar.xz
+      - run: wget http://ftpmirror.gnu.org/glibc/glibc-2.27.tar.xz
+      - run: for f in *.tar*; do tar xf $f; done
+      - run: mkdir sysroot
+      - name: Build binutils
+        run: |
+          mkdir binutils-build
+          cd binutils-build
+          ../binutils-gdb/configure --prefix=/ 
+            --target=${{ matrix.target }} \
+            --enable-multilib \
+            --enable-ld=yes \
+            --enable-gold=yes \
+            --with-sysroot
+          make -j$(nproc)
+          make DESTDIR=$GITHUB_WORKSPACE/sysroot install
+          cd $GITHUB_WORKSPACE
+
+
