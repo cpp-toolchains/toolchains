@@ -29,7 +29,9 @@ jobs:
           ../binutils-gdb/configure --prefix=/ \ 
             --target=${{ matrix.target }} \
             --host=${{ matrix.host }} \
-            --enable-multilib
+            --build=x86_64-pc-linux-gnu \
+            --enable-multilib \
+            --disable-nls
           make -j$(nproc)
           make DESTDIR=$GITHUB_WORKSPACE/sysroot install
           cd $GITHUB_WORKSPACE
