@@ -18,6 +18,7 @@ jobs:
       - name: Install dependencies
         run: sudo apt update && sudo apt install -yqq libzstd-dev libisl-dev bisonc++ libisl-dev bison byacc libgmp-dev libmpfr-dev libmpc-dev flex m4
       - run: git clone --depth=1 git://sourceware.org/git/binutils-gdb.git
+      - run: git clone --depth=1 git://gcc.gnu.org/git/gcc.git
       - run: wget https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-6.9.tar.xz
       - run: wget http://ftpmirror.gnu.org/glibc/glibc-2.27.tar.xz
       - run: for f in *.tar*; do tar xf $f; done
@@ -39,5 +40,13 @@ jobs:
           cd linux-6.9
           make ARCH=riscv INSTALL_HDR_PATH=$GITHUB_WORKSPACE/sysroot headers_install
           cd $GITHUB_WORKSPACE
+      - name: Barebones GCC
+        run: |
+          mkdir -p gcc-build
+          cd gcc-build
+          ../gcc/configure --prefix=/ --target=${{ matrix.target }} --host=${{ matrix.host }} \
+            --enable-languages=c,c++ --disable-multilib
+          make -j$(nproc) all-gcc
+          make DESTDIR=$GITHUB_WORKSPACE/sysroot install-gcc
 
 
