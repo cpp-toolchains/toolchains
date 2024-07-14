@@ -52,9 +52,9 @@ jobs:
         run: |
           mkdir glibc-build
           cd glibc-build
+          export PATH=$GITHUB_WORKSPACE/sysroot/bin:$PATH
           CC=$GITHUB_WORKSPACE/sysroot/bin/${{ matrix.target }}-gcc ../glibc-2.27/configure --prefix=/ \
-            --host=${{ matrix.host }} \
-            --target=${{ matrix.target }} \
+            --host=${{ matrix.target }} \
             --with-headers=$GITHUB_WORKSPACE/sysroot/include \
             --disable-werror \
             --enable-multilib
