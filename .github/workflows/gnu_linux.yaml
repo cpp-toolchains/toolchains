@@ -50,6 +50,8 @@ jobs:
           make DESTDIR=$GITHUB_WORKSPACE/sysroot install-gcc
       - name: Build glibc
         run: |
+          mkdir glibc-build
+          cd glibc-build
           CC=$GITHUB_WORKSPACE/sysroot/bin/${{ matrix.target }}-gcc ../glibc-2.27/configure --prefix=/ \
             --host=${{ matrix.host }} \
             --target=${{ matrix.target }} \
