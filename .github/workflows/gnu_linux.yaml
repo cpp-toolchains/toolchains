@@ -28,10 +28,10 @@ jobs:
           cd binutils-build
           ../binutils-gdb/configure --prefix=/ \ 
             --target=${{ matrix.target }} \
+            --host=${{ matrix.host }} \
             --enable-multilib \
             --enable-ld=yes \
-            --enable-gold=yes \
-            --with-sysroot
+            --enable-gold=yes
           make -j$(nproc)
           make DESTDIR=$GITHUB_WORKSPACE/sysroot install
           cd $GITHUB_WORKSPACE
