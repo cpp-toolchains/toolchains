@@ -48,5 +48,15 @@ jobs:
             --enable-languages=c,c++ --disable-multilib
           make -j$(nproc) all-gcc
           make DESTDIR=$GITHUB_WORKSPACE/sysroot install-gcc
+      - name: Build glibc
+        run: |
+          CC=$GITHUB_WORKSPACE/sysroot/bin/${{ matrix.target }}-gcc ../glibc-2.27/configure --prefix=/ \
+            --host=${{ matrix.host }} \
+            --target=${{ matrix.target }} \
+            --with-headers=$GITHUB_WORKSPACE/sysroot/include \
+            --disable-werror \
+            --enable-multilib
+          make -j$(nproc)
+          make DESTDIR=$GITHUB_WORKSPACE/sysroot install
 
 
