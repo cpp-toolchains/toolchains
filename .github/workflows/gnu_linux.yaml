@@ -26,12 +26,12 @@ jobs:
         run: |
           mkdir binutils-build
           cd binutils-build
-          ../binutils-gdb/configure --prefix=/ \ 
-            --target=${{ matrix.target }} \
-            --host=${{ matrix.host }} \
-            --build=x86_64-pc-linux-gnu \
-            --enable-multilib \
-            --disable-nls
+          ../binutils-gdb/configure --prefix=/ # \
+            # --target=${{ matrix.target }} \
+            # --host=${{ matrix.host }} \
+            # --build=x86_64-pc-linux-gnu \
+            # --enable-multilib \
+            # --disable-nls
           make -j$(nproc)
           make DESTDIR=$GITHUB_WORKSPACE/sysroot install
           cd $GITHUB_WORKSPACE
