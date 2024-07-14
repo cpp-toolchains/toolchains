@@ -37,7 +37,7 @@ jobs:
       - name: Install Linux headers
         run: |
           cd linux-6.9
-          make ARCH=riscv64 INSTALL_HDR_PATH=$GITHUB_WORKSPACE/sysroot headers_install
+          make ARCH=riscv INSTALL_HDR_PATH=$GITHUB_WORKSPACE/sysroot headers_install
           cd $GITHUB_WORKSPACE
 
 
