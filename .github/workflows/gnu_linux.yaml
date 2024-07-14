@@ -13,7 +13,7 @@ jobs:
         host:
           - x86_64-linux-gnu
         target:
-          - aarch64-linux-gnu
+          - riscv64-linux-gnu
     steps:
       - name: Install dependencies
         run: sudo apt update && sudo apt install -yqq libzstd-dev libisl-dev bisonc++ libisl-dev bison byacc libgmp-dev libmpfr-dev libmpc-dev flex m4
@@ -29,9 +29,7 @@ jobs:
           ../binutils-gdb/configure --prefix=/ \ 
             --target=${{ matrix.target }} \
             --host=${{ matrix.host }} \
-            --enable-multilib \
-            --enable-ld=yes \
-            --enable-gold=yes
+            --enable-multilib
           make -j$(nproc)
           make DESTDIR=$GITHUB_WORKSPACE/sysroot install
           cd $GITHUB_WORKSPACE
