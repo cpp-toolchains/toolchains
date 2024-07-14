@@ -26,7 +26,7 @@ jobs:
         run: |
           mkdir binutils-build
           cd binutils-build
-          ../binutils-gdb/configure --prefix=/ 
+          ../binutils-gdb/configure --prefix=/ \ 
             --target=${{ matrix.target }} \
             --enable-multilib \
             --enable-ld=yes \
